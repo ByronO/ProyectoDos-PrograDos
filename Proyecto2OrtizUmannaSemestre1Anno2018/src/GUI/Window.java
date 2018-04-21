@@ -40,7 +40,10 @@ public class Window extends Application {
     private Menu menu;
     private MenuItem item;
     private int sizePix, sizeMosaic;
+    
+    private Images i;
 
+    //va guardando las diferentes imagenes que se carguen para el mosaico 
     private ArrayList<Image> images;
 
     @Override
@@ -57,6 +60,7 @@ public class Window extends Application {
         BorderPane root = new BorderPane();
         root.setTop(bar);
 
+        //se usa para validar que en el TextField solo se ingresen numeros
         UnaryOperator<Change> integerFilter = change -> {
             String input = change.getText();
             if (input.matches("[0-9]*")) {
@@ -91,10 +95,10 @@ public class Window extends Application {
 
                     sizePix = Integer.parseInt(field.getText());
                     Label lbl3 = new Label("This size is invalid");
+                    //Limite al tamaño en pixeles de los cadros ya que si es mayor al tamaño de la imagen nola pinta
                     if (sizePix < 10 || sizePix > 999) {
-
                         lbl3.relocate(210, 53);
-                        lbl3.setTextFill(Color.web("RED"));;
+                        lbl3.setTextFill(Color.web("RED"));
                         g.getChildren().add(lbl3);
                     } else {
                         Pane g2 = new Pane();
@@ -117,10 +121,11 @@ public class Window extends Application {
                         b2.setOnAction((ActionEvent event2) -> {
                             sizeMosaic = Integer.parseInt(field2.getText());
                             Label lbl4 = new Label("This size is invalid");
+                            /*limite al tamaño minimo del mosaico, se puede quitar
+                            o agregar un limite para el tamaño maximo*/
                             if (sizeMosaic < 3) {
-
                                 lbl4.relocate(210, 53);
-                                lbl4.setTextFill(Color.web("RED"));;
+                                lbl4.setTextFill(Color.web("RED"));
                                 g2.getChildren().add(lbl4);
                             } else {
 
@@ -129,20 +134,13 @@ public class Window extends Application {
 
                                 if (file.isFile() && file.getName().contains(".jpg") || file.getName().contains(".png")) {
 
-                                    try {
-                                        String url = file.toURI().toURL().toString();
-                                        Image image = new Image("file:" + file.getAbsolutePath());
-                                        images.add(image);
-
-                                        Images i = new Images(sizePix);
-                                        MosaicInterface m = new MosaicInterface(sizePix, sizeMosaic);
-                                        ScrollPane scroll2 = new ScrollPane(m.Mosaic());
-                                        scroll2.setMaxSize(600, 600);
-                                        root.setLeft(i.image(images));
-                                        root.setRight(scroll2);
-                                    } catch (MalformedURLException ex) {
-                                        Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
-                                    }
+                                    Image image = new Image("file:" + file.getAbsolutePath());
+                                    images.add(image);
+                                    this.i = new Images(sizePix, sizeMosaic);
+                                    ScrollPane scroll2 = new ScrollPane(i.Mosaic());
+                                    scroll2.setMaxSize(600, 600);
+                                    root.setLeft(i.image(images));
+                                    root.setRight(scroll2);
                                 }
                             }
 
@@ -156,18 +154,9 @@ public class Window extends Application {
 
                 if (file.isFile() && file.getName().contains(".jpg") || file.getName().contains(".png")) {
 
-                    try {
-                        String url = file.toURI().toURL().toString();
-                        Image image = new Image(url);
-                        images.add(image);
-
-                        Images i = new Images(sizePix);
-//                    i.clear();
-                        root.setLeft(i.image(images));
-
-                    } catch (MalformedURLException ex) {
-                        Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                    Image image = new Image("file:" + file.getAbsolutePath());
+                    images.add(image);
+                    root.setLeft(this.i.image(images));
                 }
             }
         });

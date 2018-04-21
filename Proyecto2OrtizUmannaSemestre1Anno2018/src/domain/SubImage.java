@@ -5,11 +5,26 @@
  */
 package domain;
 
+import javafx.scene.image.Image;
+
 /**
  *
  * @author byron
  */
 public class SubImage {
     
+    private Image image;
+
+    public SubImage(Image image) {
+        this.image = image;
+    }
+
+    public Image getImage() {
+        return image;
+    }
+
+    public void setImage(Image image) {
+        this.image = image;
+    }
     
 }

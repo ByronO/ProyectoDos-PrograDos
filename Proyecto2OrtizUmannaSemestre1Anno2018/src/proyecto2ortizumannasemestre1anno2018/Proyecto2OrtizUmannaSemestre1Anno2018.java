@@ -20,8 +20,6 @@ public class Proyecto2OrtizUmannaSemestre1Anno2018 {
     public static void main(String[] args) {
         Application.launch(Window.class, args);
         
-        
-
     }
     
     
