@@ -7,15 +7,21 @@ package GUI;
 
 import java.util.ArrayList;
 import javafx.event.ActionEvent;
-import javafx.scene.Node;
+import javafx.event.EventHandler;
+import javafx.geometry.Point3D;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.transform.Rotate;
 
 /**
  *
@@ -30,6 +36,7 @@ public class MosaicInterface {
     private WritableImage writable; //convierte pixeles en una imagen
     private PixelReader pixel; //se encarga de leer pixel por pixel
     public Image subImage;
+    private MenuItem item, item1, item2, item3, item4;
 
     public MosaicInterface(int sizePix, int sizeMosaic) {
         b1 = new Button("<");
@@ -37,6 +44,11 @@ public class MosaicInterface {
         g = new GridPane();
         this.sizePix = sizePix;
         this.sizeMosaic = sizeMosaic;
+        item = new MenuItem("Left rotate");
+        item1 = new MenuItem("Right rotate");
+        item2 = new MenuItem("Invert Y");
+        item3 = new MenuItem("Invert X");
+        item4 = new MenuItem("Delete");
 
     }
 
@@ -153,21 +165,54 @@ public class MosaicInterface {
                 hBox_outter.setStyle(style_outter);
                 hBox_outter.setPrefSize(sizePix, sizePix);
 
-//                int[][] a = new int[sizeMosaic][sizeMosaic];
 
                 /*Se le da al imageView vacio al que se le de click el atributo 
                 subImage que tiene el trozo de imagen obtenido al darle click a una parte de la imagen*/
-                hBox_outter.setOnMouseClicked((event) -> {
-                    imageS.setImage(subImage);
-                    //limpia el imageView en caso de que tenga algo dentro porque sino tira error
-                    hBox_outter.getChildren().clear();
-                    //agrega el trozo de imagen
-                    hBox_outter.getChildren().add(imageS);
+                hBox_outter.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        if (event.getButton() == MouseButton.PRIMARY) {
+                            imageS.setRotate(0);
+                            imageS.setImage(subImage);
+                            imageS.getTransforms().clear();
 
+                            hBox_outter.setStyle(null);
+
+                            //limpia el imageView en caso de que tenga algo dentro porque sino tira error
+                            hBox_outter.getChildren().clear();
+                            //agrega el trozo de imagen
+                            hBox_outter.getChildren().add(imageS);
+                        } else if (event.getButton() == MouseButton.SECONDARY) {
+                            ContextMenu context = new ContextMenu();
+                            context.getItems().addAll(item, item1, item2, item3, item4);
+
+                            item.setOnAction((eventRotateL) -> {
+                                imageS.setRotate(imageS.getRotate() - 90);
+                            });
+                            item1.setOnAction((eventRotateR) -> {
+                                imageS.setRotate(imageS.getRotate() + 90);
+                            });
+                            item2.setOnAction((eventInvertY) -> {
+                                imageS.getTransforms().add(new Rotate(180, 0, sizePix/2, 0, Rotate.X_AXIS));
+                            });
+                            item3.setOnAction((eventInvertX) -> {
+                                imageS.getTransforms().add(new Rotate(180, sizePix/2, 0, 0, Rotate.Y_AXIS));
+                            });
+                            item4.setOnAction((eventDelete) -> {
+                                imageS.setImage(null);
+                                String style_outter = "-fx-border-color: red;"
+                                        + "-fx-border-width: 1;"
+                                        + "-fx-border-style: dotted;";
+                                hBox_outter.setStyle(style_outter);
+                            });
+
+                            context.show(hBox_outter, event.getScreenX(), event.getScreenY());
+                        }
 //                    this.mosaic.setImagesPath(i, j, subImage.toString());
 //                     g.getChildren().forEach((Node panel) -> {
 //                        System.out.println("Nodo: " + panel.getClip());
 //                    });
+                    }
                 });
 
                 g.add(hBox_outter, i, j);
@@ -177,23 +222,23 @@ public class MosaicInterface {
         return g;
     }
 
-    //metodo para dividir la imagen del mosaico que se va a cargar
+//metodo para dividir la imagen del mosaico que se va a cargar
     public GridPane splitMosaic(Image a, int sizeMosaic, int sizePix) {
 
         GridPane g = new GridPane();
         int x = 0;
         int y = 0;
 
-        System.out.println(a.getWidth() + "--" + a.getHeight());
+        System.out.println(a.getWidth() + "--" + a.getHeight()+ "--" +sizeMosaic+ "--" +sizePix);
 
         /*estos for recorren el GridPane como si fuera una matriz corriente del tamaño
         [blocksX][blocksY] y va agregando en cada posicion el hBox con el trozo de imagen*/
         for (int i = 0; i <= sizeMosaic; i++) {
             for (int j = 0; j <= sizeMosaic; j++) {
                 //controla si ya se llego al ultimo cuadro en el que se puede dividir la imagen
-                if (x + sizePix < a.getWidth() && y + sizePix < a.getHeight()) {
-                    this.pixel = a.getPixelReader(); //recibe los pixeles de la imagen
-                    this.writable = new WritableImage(this.pixel, x, y, sizePix, sizePix);//parte la imagen en el x,y del tamaño ingresado 
+                if (x + sizePix <= a.getWidth() && y + sizePix <= a.getHeight()) {
+                    PixelReader pixel = a.getPixelReader(); //recibe los pixeles de la imagen
+                    this.writable = new WritableImage(pixel, x, y, sizePix, sizePix);//parte la imagen en el x,y del tamaño ingresado 
                     ImageView imageS = new ImageView(writable);
 
                     HBox hBox_outter = new HBox();
@@ -203,18 +248,52 @@ public class MosaicInterface {
                     hBox_outter.setStyle(style_outter);
                     hBox_outter.getChildren().add(imageS);
 
-                    hBox_outter.setOnMouseClicked((event) -> {
-                        imageS.setImage(subImage);
-                        //limpia el imageView en caso de que tenga algo dentro porque sino tira error
-                        hBox_outter.getChildren().clear();
-                        //agrega el trozo de imagen
-                        hBox_outter.getChildren().add(imageS);
+                   hBox_outter.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        if (event.getButton() == MouseButton.PRIMARY) {
+                            imageS.setRotate(0);
+                            imageS.setImage(subImage);
+                            imageS.getTransforms().clear();
 
+                            hBox_outter.setStyle(null);
+
+                            //limpia el imageView en caso de que tenga algo dentro porque sino tira error
+                            hBox_outter.getChildren().clear();
+                            //agrega el trozo de imagen
+                            hBox_outter.getChildren().add(imageS);
+                        } else if (event.getButton() == MouseButton.SECONDARY) {
+                            ContextMenu context = new ContextMenu();
+                            context.getItems().addAll(item, item1, item2, item3, item4);
+
+                            item.setOnAction((eventRotateL) -> {
+                                imageS.setRotate(imageS.getRotate() - 90);
+                            });
+                            item1.setOnAction((eventRotateR) -> {
+                                imageS.setRotate(imageS.getRotate() + 90);
+                            });
+                            item2.setOnAction((eventInvertY) -> {
+                                imageS.getTransforms().add(new Rotate(180, 0, sizePix/2, 0, Rotate.X_AXIS));
+                            });
+                            item3.setOnAction((eventInvertX) -> {
+                                imageS.getTransforms().add(new Rotate(180, sizePix/2, 0, 0, Rotate.Y_AXIS));
+                            });
+                            item4.setOnAction((eventDelete) -> {
+                                imageS.setImage(null);
+                                String style_outter = "-fx-border-color: red;"
+                                        + "-fx-border-width: 1;"
+                                        + "-fx-border-style: dotted;";
+                                hBox_outter.setStyle(style_outter);
+                            });
+
+                            context.show(hBox_outter, event.getScreenX(), event.getScreenY());
+                        }
 //                    this.mosaic.setImagesPath(i, j, subImage.toString());
 //                     g.getChildren().forEach((Node panel) -> {
 //                        System.out.println("Nodo: " + panel.getClip());
 //                    });
-                    });
+                    }
+                });
 
                     g.add(hBox_outter, i, j);
 
@@ -232,3 +311,4 @@ public class MosaicInterface {
     }
 
 }
+/**/

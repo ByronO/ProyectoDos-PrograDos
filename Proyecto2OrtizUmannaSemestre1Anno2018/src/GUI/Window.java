@@ -9,17 +9,13 @@ import data.MosaicData;
 import domain.Mosaic;
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.function.UnaryOperator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
-import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
@@ -34,7 +30,6 @@ import javafx.scene.control.TextFormatter.Change;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -68,8 +63,9 @@ public class Window extends Application {
 
         bar = new MenuBar();
         menu = new Menu("Image");
-        item = new MenuItem("Load image");
         menu1 = new Menu("Proyect");
+
+        item = new MenuItem("Load image");
         item1 = new MenuItem("End Mosaic");
         item2 = new MenuItem("Save Proyect");
         item3 = new MenuItem("Load Proyect");
@@ -78,7 +74,7 @@ public class Window extends Application {
 
         bar.getMenus().addAll(menu, menu1);
         menu.getItems().addAll(item);
-        menu.getItems().addAll(item3);
+        menu1.getItems().addAll(item3);
 
         this.mosaicData = new MosaicData();
 
@@ -168,7 +164,8 @@ public class Window extends Application {
                                     this.m = new MosaicInterface(sizePix, sizeMosaic);
 
                                     scroll2 = new ScrollPane(m.Mosaic());
-                                    scroll2.setMaxSize(600, 600);
+                                    scroll2.setMaxHeight(600);
+                                    scroll2.setMaxWidth(600);
 
                                     menu.getItems().addAll(item1);
                                     menu1.getItems().addAll(item2);
@@ -185,7 +182,6 @@ public class Window extends Application {
                             }
 
                         });
-
                     }
                 });
             } else {
@@ -220,7 +216,7 @@ public class Window extends Application {
 
             root.setBottom(g3);
 
-            b5.setOnAction((ActionEvent event5) -> {
+            b5.setOnAction((ActionEvent eventSave) -> {
                 this.nameOfProyect = field5.getText();
                 mosaicData = new MosaicData();
 
@@ -258,7 +254,7 @@ public class Window extends Application {
 
         });
 
-        item3.setOnAction((even7) -> {
+        item3.setOnAction((eventLoad) -> {
             try {
 
                 ArrayList<Image> images = new ArrayList<>();
@@ -288,12 +284,19 @@ public class Window extends Application {
                         images.add(image);
                     }
                 }
-
                 Image mosaicImage = new Image(mosaic.getMosaicPath());
-                System.out.println(mosaic.getMosaicPath());
+                
                 this.m = new MosaicInterface(mosaic.getSizePix(), mosaic.getSizeMosaic());
+                
+                ScrollPane scroll3 = new ScrollPane(m.splitMosaic(mosaicImage, mosaic.getSizeMosaic(), mosaic.getSizePix()));
+                scroll3.setMaxHeight(600);
+                scroll3.setMaxWidth(600);
+
+                
+                System.out.println(mosaic.getMosaicPath());
+                
                 root.setLeft(m.image(images));
-                root.setRight(m.splitMosaic(mosaicImage, sizeMosaic, sizePix));
+                root.setRight(scroll3);
 
             } catch (IOException ex) {
                 Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
