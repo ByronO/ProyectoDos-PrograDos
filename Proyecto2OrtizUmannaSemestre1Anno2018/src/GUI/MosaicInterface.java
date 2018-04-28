@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Point3D;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -193,10 +194,10 @@ public class MosaicInterface {
                                 imageS.setRotate(imageS.getRotate() + 90);
                             });
                             item2.setOnAction((eventInvertY) -> {
-                                imageS.getTransforms().add(new Rotate(180, 0, sizePix/2, 0, Rotate.X_AXIS));
+                                imageS.getTransforms().add(new Rotate(180, 0, sizePix / 2, 0, Rotate.X_AXIS));
                             });
                             item3.setOnAction((eventInvertX) -> {
-                                imageS.getTransforms().add(new Rotate(180, sizePix/2, 0, 0, Rotate.Y_AXIS));
+                                imageS.getTransforms().add(new Rotate(180, sizePix / 2, 0, 0, Rotate.Y_AXIS));
                             });
                             item4.setOnAction((eventDelete) -> {
                                 imageS.setImage(null);
@@ -208,12 +209,10 @@ public class MosaicInterface {
 
                             context.show(hBox_outter, event.getScreenX(), event.getScreenY());
                         }
-//                    this.mosaic.setImagesPath(i, j, subImage.toString());
-//                     g.getChildren().forEach((Node panel) -> {
-//                        System.out.println("Nodo: " + panel.getClip());
-//                    });
+
                     }
                 });
+
 
                 g.add(hBox_outter, i, j);
             }
@@ -229,7 +228,7 @@ public class MosaicInterface {
         int x = 0;
         int y = 0;
 
-        System.out.println(a.getWidth() + "--" + a.getHeight()+ "--" +sizeMosaic+ "--" +sizePix);
+        System.out.println(a.getWidth() + "--" + a.getHeight() + "--" + sizeMosaic + "--" + sizePix);
 
         /*estos for recorren el GridPane como si fuera una matriz corriente del tamaño
         [blocksX][blocksY] y va agregando en cada posicion el hBox con el trozo de imagen*/
@@ -242,58 +241,57 @@ public class MosaicInterface {
                     ImageView imageS = new ImageView(writable);
 
                     HBox hBox_outter = new HBox();
-                    String style_outter = "-fx-border-color: red;"
-                            + "-fx-border-width: 1;"
-                            + "-fx-border-style: dotted;";
-                    hBox_outter.setStyle(style_outter);
+//                    String style_outter = "-fx-border-color: red;"
+//                            + "-fx-border-width: 1;"
+//                            + "-fx-border-style: dotted;";
+//                    hBox_outter.setStyle(style_outter);
                     hBox_outter.getChildren().add(imageS);
 
-                   hBox_outter.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent event) {
-                        if (event.getButton() == MouseButton.PRIMARY) {
-                            imageS.setRotate(0);
-                            imageS.setImage(subImage);
-                            imageS.getTransforms().clear();
+                    hBox_outter.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent event) {
+                            if (event.getButton() == MouseButton.PRIMARY) {
+                                imageS.setRotate(0);
+                                imageS.setImage(subImage);
+                                imageS.getTransforms().clear();
 
-                            hBox_outter.setStyle(null);
+                                hBox_outter.setStyle(null);
 
-                            //limpia el imageView en caso de que tenga algo dentro porque sino tira error
-                            hBox_outter.getChildren().clear();
-                            //agrega el trozo de imagen
-                            hBox_outter.getChildren().add(imageS);
-                        } else if (event.getButton() == MouseButton.SECONDARY) {
-                            ContextMenu context = new ContextMenu();
-                            context.getItems().addAll(item, item1, item2, item3, item4);
+                                //limpia el imageView en caso de que tenga algo dentro porque sino tira error
+                                hBox_outter.getChildren().clear();
+                                //agrega el trozo de imagen
+                                hBox_outter.getChildren().add(imageS);
+                            } else if (event.getButton() == MouseButton.SECONDARY) {
+                                ContextMenu context = new ContextMenu();
+                                context.getItems().addAll(item, item1, item2, item3, item4);
 
-                            item.setOnAction((eventRotateL) -> {
-                                imageS.setRotate(imageS.getRotate() - 90);
-                            });
-                            item1.setOnAction((eventRotateR) -> {
-                                imageS.setRotate(imageS.getRotate() + 90);
-                            });
-                            item2.setOnAction((eventInvertY) -> {
-                                imageS.getTransforms().add(new Rotate(180, 0, sizePix/2, 0, Rotate.X_AXIS));
-                            });
-                            item3.setOnAction((eventInvertX) -> {
-                                imageS.getTransforms().add(new Rotate(180, sizePix/2, 0, 0, Rotate.Y_AXIS));
-                            });
-                            item4.setOnAction((eventDelete) -> {
-                                imageS.setImage(null);
-                                String style_outter = "-fx-border-color: red;"
-                                        + "-fx-border-width: 1;"
-                                        + "-fx-border-style: dotted;";
-                                hBox_outter.setStyle(style_outter);
-                            });
+                                item.setOnAction((eventRotateL) -> {
+                                    imageS.setRotate(imageS.getRotate() - 90);
+                                });
+                                item1.setOnAction((eventRotateR) -> {
+                                    imageS.setRotate(imageS.getRotate() + 90);
+                                });
+                                item2.setOnAction((eventInvertY) -> {
+                                    imageS.getTransforms().add(new Rotate(180, 0, sizePix / 2, 0, Rotate.X_AXIS));
+                                });
+                                item3.setOnAction((eventInvertX) -> {
+                                    imageS.getTransforms().add(new Rotate(180, sizePix / 2, 0, 0, Rotate.Y_AXIS));
+                                });
+                                item4.setOnAction((eventDelete) -> {
+                                    imageS.setImage(null);
+                                    String style_outter = "-fx-border-color: red;"
+                                            + "-fx-border-width: 1;"
+                                            + "-fx-border-style: dotted;";
+                                    hBox_outter.setStyle(style_outter);
+                                });
 
-                            context.show(hBox_outter, event.getScreenX(), event.getScreenY());
-                        }
-//                    this.mosaic.setImagesPath(i, j, subImage.toString());
+                                context.show(hBox_outter, event.getScreenX(), event.getScreenY());
+                            }
 //                     g.getChildren().forEach((Node panel) -> {
 //                        System.out.println("Nodo: " + panel.getClip());
 //                    });
-                    }
-                });
+                        }
+                    });
 
                     g.add(hBox_outter, i, j);
 
