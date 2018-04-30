@@ -30,6 +30,7 @@ import javafx.scene.control.TextFormatter;
 import javafx.scene.control.TextFormatter.Change;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -48,7 +49,7 @@ public class Window extends Application {
 
     private MenuBar bar;
     private Menu menu, menu1;
-    private MenuItem item, item1, item2, item3;
+    private MenuItem itemNewProyect, itemExportMosaic, itemSaveProyect, itemLoadProyect, itemLoadImage;
     private int sizePix, sizeMosaic;
     private String nameOfProyect;
     private ScrollPane scroll2;
@@ -65,23 +66,28 @@ public class Window extends Application {
     public void start(Stage primaryStage) throws Exception {
 
         bar = new MenuBar();
-        menu = new Menu("Image");
+        menu = new Menu("Mosaic");
         menu1 = new Menu("Proyect");
 
-        item = new MenuItem("Load image");
-        item1 = new MenuItem("Export Mosaic");
-        item2 = new MenuItem("Save Proyect");
-        item3 = new MenuItem("Load Proyect");
+        itemNewProyect = new MenuItem("New mosaic");
+        itemLoadImage = new MenuItem("Load image");
+        itemExportMosaic = new MenuItem("Export mosaic");
+        itemSaveProyect = new MenuItem("Save proyect");
+        itemLoadProyect = new MenuItem("Load proyect");
         images = null;
         scroll2 = null;
 
         bar.getMenus().addAll(menu, menu1);
-        menu.getItems().addAll(item);
-        menu1.getItems().addAll(item3);
+        menu.getItems().addAll(itemNewProyect);
+        menu1.getItems().addAll(itemLoadProyect);
 
         this.mosaicData = new MosaicData();
 
         BorderPane root = new BorderPane();
+        String imageBackground = "/assets/a400a3da30d7aa298406759adb958cd0.jpg";
+        root.setStyle("-fx-background-image: url('" + imageBackground + "'); "
+                + "-fx-background-position: center center; "
+        );
         root.setTop(bar);
 
         //se usa para validar que en el TextField solo se ingresen numeros
@@ -93,7 +99,7 @@ public class Window extends Application {
             return null;
         };
 
-        item.setOnAction((ActionEvent event) -> {
+        itemNewProyect.setOnAction((ActionEvent event) -> {
 
             if (images == null) {
                 images = new ArrayList<>();
@@ -104,138 +110,189 @@ public class Window extends Application {
                 Button b = new Button("Select");
                 TextField field = new TextField();
                 field.setTextFormatter(new TextFormatter<String>(integerFilter));
-
                 Label lbl = new Label("Select the size of the blocks in which you will divide the image");
+                lbl.setTextFill(Color.WHITE);
+                TextField field2 = new TextField();
+                field2.setTextFormatter(new TextFormatter<String>(integerFilter));
+                Label lbl2 = new Label("Select the size of the Mosaic");
+                lbl2.setTextFill(Color.WHITE);
 
                 lbl.relocate(30, 20);
                 field.relocate(30, 50);
-                b.relocate(80, 90);
+                lbl2.relocate(30, 85);
+                field2.relocate(30, 110);
+                b.relocate(80, 145);
 
                 g.getChildren().add(lbl);
                 g.getChildren().add(field);
+                g.getChildren().add(lbl2);
+                g.getChildren().add(field2);
                 g.getChildren().add(b);
 
                 root.setLeft(g);
 
                 b.setOnAction((ActionEvent event1) -> {
 
-                    sizePix = Integer.parseInt(field.getText());
                     Label lbl3 = new Label("This size is invalid");
+                    lbl3.setTextFill(Color.web("RED"));
+                    sizePix = Integer.parseInt(field.getText());
+                    sizeMosaic = Integer.parseInt(field2.getText());
                     //Limite al tamaño en pixeles de los cadros ya que si es mayor al tamaño de la imagen nola pinta
                     if (sizePix < 30 || sizePix > 500) {
                         lbl3.relocate(210, 53);
-                        lbl3.setTextFill(Color.web("RED"));
+                        g.getChildren().add(lbl3);
+                    } else if (sizeMosaic < 3) {
+                        lbl3.relocate(210, 113);
                         g.getChildren().add(lbl3);
                     } else {
-                        Pane g2 = new Pane();
+                        FileChooser fileChooser = new FileChooser();
+                        File file = fileChooser.showOpenDialog(primaryStage);
 
-                        TextField field2 = new TextField();
-                        field2.setTextFormatter(new TextFormatter<String>(integerFilter));
-                        Label lbl2 = new Label("Select the size of the Mosaic");
-                        Button b2 = new Button("Select");
+                        if (file.isFile() && file.getName().contains(".jpg") || file.getName().contains(".png")) {
 
-                        b2.relocate(80, 90);
-                        lbl2.relocate(30, 20);
-                        field2.relocate(30, 50);
+                            Image image = new Image("file:" + file.getAbsolutePath());
+                            images.add(image);
+                            imagesPath.add("file:" + file.getAbsolutePath());
+                            this.m = new MosaicInterface(sizePix, sizeMosaic);
 
-                        g2.getChildren().add(lbl2);
-                        g2.getChildren().add(field2);
-                        g2.getChildren().add(b2);
+                            scroll2 = new ScrollPane(m.Mosaic());
+                            scroll2.setPrefSize(600, 600);
 
-                        root.setLeft(g2);
+                            menu.getItems().add(itemLoadImage);
+                            menu.getItems().addAll(itemExportMosaic);
+                            menu1.getItems().addAll(itemSaveProyect);
 
-                        b2.setOnAction((ActionEvent event2) -> {
-
-                            sizeMosaic = Integer.parseInt(field2.getText());
-                            Label lbl4 = new Label("This size is invalid");
-                            /*limite al tamaño minimo del mosaico, se puede quitar
-                            o agregar un limite para el tamaño maximo*/
-                            if (sizeMosaic < 3) {
-                                lbl4.relocate(210, 53);
-                                lbl4.setTextFill(Color.web("RED"));
-                                g2.getChildren().add(lbl4);
-                            } else {
-
-                                FileChooser fileChooser = new FileChooser();
-                                File file = fileChooser.showOpenDialog(primaryStage);
-
-                                if (file.isFile() && file.getName().contains(".jpg") || file.getName().contains(".png")) {
-
-                                    Image image = new Image("file:" + file.getAbsolutePath());
-                                    images.add(image);
-                                    imagesPath.add("file:" + file.getAbsolutePath());
-                                    this.m = new MosaicInterface(sizePix, sizeMosaic);
-
-                                    scroll2 = new ScrollPane(m.Mosaic());
-//                                    scroll2.setMaxHeight(600);
-//                                    scroll2.setMaxWidth(600);
-                                    scroll2.setPrefSize(600, 600);
-
-                                    menu.getItems().addAll(item1);
-                                    menu1.getItems().addAll(item2);
-
-                                    int auxI = 0;
-                                    item1.setOnAction((event3) -> {
-                                        FileChooser jF1 = new FileChooser();
-                                        String ruta = "";
-                                        try {
-                                            File ruta1 = jF1.showSaveDialog(null);
-                                            ruta = ruta1.getAbsolutePath();
-
-                                            if (this.scroll2 != null) {
-                                                GridPane gaux = (GridPane) scroll2.getContent();
-                                                gaux.getChildren().forEach((Node panel) -> {
-                                                    panel.setStyle(null);
-                                                });
-
-                                                ScrollPane sAux = new ScrollPane(gaux);
-                                                SnapshotParameters parameters = new SnapshotParameters();
-                                                parameters.setFill(Color.TRANSPARENT);
-                                                WritableImage imageFinal = sAux.getContent().snapshot(parameters, null);
-                                                File imagePath = new File(ruta + ".png");
-
-                                                try {
-                                                    ImageIO.write(SwingFXUtils.fromFXImage(imageFinal, null), "png", imagePath);
-                                                    gaux.getChildren().forEach((Node panel) -> {
-                                                        panel.setStyle("-fx-border-color: red;"
-                                                                + "-fx-border-width: 1;"
-                                                                + "-fx-border-style: dotted;");
-                                                    });
-                                                } catch (IOException ex) {
-                                                    Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
-                                                }
-                                            }
-
-                                        } catch (Exception ex) {
-                                            ex.printStackTrace();
-                                        }
-
-                                    });
-
-                                    root.setLeft(m.image(images));
-                                    root.setRight(scroll2);
-                                    root.setTop(bar);
-                                }
-                            }
-
-                        });
+                            root.setLeft(m.image(images));
+                            root.setRight(scroll2);
+                            root.setTop(bar);
+                        }
                     }
+
                 });
             } else {
-                FileChooser fileChooser = new FileChooser();
-                File file = fileChooser.showOpenDialog(primaryStage);
+                int dialogButton = JOptionPane.showConfirmDialog(null, "Do you want to advance? all changes that have not been previously saved will be lost", "Warning", JOptionPane.YES_NO_OPTION);
+                if (dialogButton == 0) {
+                    root.setRight(null);
 
-                if (file.isFile() && file.getName().contains(".jpg") || file.getName().contains(".png")) {
+                    images = new ArrayList<>();
+                    imagesPath = new ArrayList<>();
 
-                    Image image = new Image("file:" + file.getAbsolutePath());
-                    images.add(image);
-                    imagesPath.add("file:" + file.getAbsolutePath());
-                    root.setLeft(this.m.image(images));
+                    Pane g = new Pane();
+
+                    Button b = new Button("Select");
+                    TextField field = new TextField();
+                    field.setTextFormatter(new TextFormatter<String>(integerFilter));
+                    Label lbl = new Label("Select the size of the blocks in which you will divide the image");
+                    lbl.setTextFill(Color.WHITE);
+                    TextField field2 = new TextField();
+                    field2.setTextFormatter(new TextFormatter<String>(integerFilter));
+                    Label lbl2 = new Label("Select the size of the Mosaic");
+                    lbl2.setTextFill(Color.WHITE);
+
+                    lbl.relocate(30, 20);
+                    field.relocate(30, 50);
+                    lbl2.relocate(30, 85);
+                    field2.relocate(30, 110);
+                    b.relocate(80, 145);
+
+                    g.getChildren().add(lbl);
+                    g.getChildren().add(field);
+                    g.getChildren().add(lbl2);
+                    g.getChildren().add(field2);
+                    g.getChildren().add(b);
+
+                    root.setLeft(g);
+
+                    b.setOnAction((ActionEvent event1) -> {
+
+                        Label lbl3 = new Label("This size is invalid");
+                        lbl3.setTextFill(Color.web("RED"));
+                        sizePix = Integer.parseInt(field.getText());
+                        sizeMosaic = Integer.parseInt(field2.getText());
+                        //Limite al tamaño en pixeles de los cadros ya que si es mayor al tamaño de la imagen nola pinta
+                        if (sizePix < 30 || sizePix > 500) {
+                            lbl3.relocate(210, 53);
+                            g.getChildren().add(lbl3);
+                        } else if (sizeMosaic < 3) {
+                            lbl3.relocate(210, 113);
+                            g.getChildren().add(lbl3);
+                        } else {
+                            FileChooser fileChooser = new FileChooser();
+                            File file = fileChooser.showOpenDialog(primaryStage);
+
+                            if (file.isFile() && file.getName().contains(".jpg") || file.getName().contains(".png")) {
+
+                                Image image = new Image("file:" + file.getAbsolutePath());
+                                images.add(image);
+                                imagesPath.add("file:" + file.getAbsolutePath());
+                                this.m = new MosaicInterface(sizePix, sizeMosaic);
+
+                                scroll2 = new ScrollPane(m.Mosaic());
+                                scroll2.setPrefSize(600, 600);
+
+                                root.setLeft(m.image(images));
+                                root.setRight(scroll2);
+                                root.setTop(bar);
+                            }
+                        }
+
+                    });
+
                 }
             }
         });
 
-        item2.setOnAction((event6) -> {
+        itemExportMosaic.setOnAction((event3) -> {
+            FileChooser jF1 = new FileChooser();
+            String ruta = "";
+            try {
+                File ruta1 = jF1.showSaveDialog(null);
+                ruta = ruta1.getAbsolutePath();
+
+                if (this.scroll2 != null) {
+                    GridPane gaux = (GridPane) scroll2.getContent();
+                    gaux.getChildren().forEach((Node panel) -> {
+                        panel.setStyle(null);
+                    });
+
+                    ScrollPane sAux = new ScrollPane(gaux);
+                    SnapshotParameters parameters = new SnapshotParameters();
+                    parameters.setFill(Color.TRANSPARENT);
+                    WritableImage imageFinal = sAux.getContent().snapshot(parameters, null);
+                    File imagePath = new File(ruta + ".png");
+
+                    try {
+                        ImageIO.write(SwingFXUtils.fromFXImage(imageFinal, null), "png", imagePath);
+                        gaux.getChildren().forEach((Node panel) -> {
+                            panel.setStyle("-fx-border-color: red;"
+                                    + "-fx-border-width: 1;"
+                                    + "-fx-border-style: dotted;");
+                        });
+                    } catch (IOException ex) {
+                        Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+        });
+
+        itemLoadImage.setOnAction((eventLoadImage) -> {
+            FileChooser fileChooser = new FileChooser();
+            File file = fileChooser.showOpenDialog(primaryStage);
+
+            if (file.isFile() && file.getName().contains(".jpg") || file.getName().contains(".png")) {
+
+                Image image = new Image("file:" + file.getAbsolutePath());
+                images.add(image);
+                imagesPath.add("file:" + file.getAbsolutePath());
+                root.setLeft(this.m.image(images));
+            }
+        });
+
+        itemSaveProyect.setOnAction((event6) -> {
 
 //            FileChooser fileChooser = new FileChooser();
 //            File directory = fileChooser.showSaveDialog(primaryStage);
@@ -281,14 +338,6 @@ public class Window extends Application {
 
                 if (this.scroll2 != null) {
                     ScrollPane sAux = new ScrollPane(scroll2.getContent());
-//
-//                    gaux.getChildren().forEach((Node panel) -> {
-//                        String style_outter = "-fx-border-color: black;"
-//                                + "-fx-border-width: 1;"
-//                                + "-fx-border-style: dotted;";
-//                        panel.setStyle(style_outter);
-//
-//                    });
 
                     WritableImage imageFinal = sAux.getContent().snapshot(new SnapshotParameters(), null);
                     File imagePath = new File(nameOfProyect + ".png");
@@ -311,14 +360,15 @@ public class Window extends Application {
                 }
 
             });
-              });
+        });
 
-            item3.setOnAction((eventLoad) -> {
-                try {
+        itemLoadProyect.setOnAction((eventLoad) -> {
+            try {
 
-                    ArrayList<Image> images = new ArrayList<>();
+                images = new ArrayList<>();
 
-                    String name = JOptionPane.showInputDialog("IAIAIA");
+                String name = JOptionPane.showInputDialog("Enter the name of the proyect");
+                if (name != null) {
                     mosaicData = new MosaicData();
 
                     ArrayList<Mosaic> aux = this.mosaicData.loadProyect();
@@ -338,42 +388,41 @@ public class Window extends Application {
                         images.clear();
                         for (int i = 0; i < mosaic.getImages().size(); i++) {
                             Image image = new Image(mosaic.getImages().get(i));
-                            System.out.println(mosaic.getImages().get(i));
 
                             images.add(image);
                         }
                     }
                     Image mosaicImage = new Image(mosaic.getMosaicPath());
-
+                    imagesPath = mosaic.getImages();
                     this.m = new MosaicInterface(mosaic.getSizePix(), mosaic.getSizeMosaic());
 
-                    ScrollPane scroll3 = new ScrollPane(m.splitMosaic(mosaicImage, mosaic.getSizeMosaic(), mosaic.getSizePix()));
-                    scroll3.setMaxHeight(600);
-                    scroll3.setMaxWidth(600);
-
-                    System.out.println(mosaic.getMosaicPath());
-
+                    scroll2 = new ScrollPane(m.splitMosaic(mosaicImage, mosaic.getSizeMosaic(), mosaic.getSizePix()));
+                    scroll2.setMaxHeight(600);
+                    scroll2.setMaxWidth(600);
                     root.setLeft(m.image(images));
-                    root.setRight(scroll3);
-
-                } catch (IOException ex) {
-                    Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (ClassNotFoundException ex) {
-                    Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
+                    root.setRight(scroll2);
+                    menu.getItems().addAll(itemLoadImage, itemExportMosaic);
+                    menu1.getItems().addAll(itemSaveProyect);
+                    
                 }
+            } catch (IOException ex) {
+                Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
-            });
+        });
 
-            Scene scene = new Scene(root, 1200, 700);
+        Scene scene = new Scene(root, 1200, 700);
 
-            primaryStage.setTitle(
-                    "Window");
-            primaryStage.setScene(scene);
-            primaryStage.setMaximized(true);
-            primaryStage.show();
+        primaryStage.setTitle(
+                "Window");
+        primaryStage.setScene(scene);
+        primaryStage.setMaximized(true);
+        primaryStage.show();
 
-            setUserAgentStylesheet(STYLESHEET_CASPIAN);
-
-        }
+        setUserAgentStylesheet(STYLESHEET_CASPIAN);
 
     }
+
+}

@@ -227,9 +227,6 @@ public class MosaicInterface {
         GridPane g = new GridPane();
         int x = 0;
         int y = 0;
-
-        System.out.println(a.getWidth() + "--" + a.getHeight() + "--" + sizeMosaic + "--" + sizePix);
-
         /*estos for recorren el GridPane como si fuera una matriz corriente del tamaño
         [blocksX][blocksY] y va agregando en cada posicion el hBox con el trozo de imagen*/
         for (int i = 0; i <= sizeMosaic; i++) {

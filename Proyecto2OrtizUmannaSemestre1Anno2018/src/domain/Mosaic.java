@@ -15,14 +15,12 @@ import java.util.ArrayList;
 public class Mosaic implements Serializable{
     
     private String nameMosaic, mosaicPath;
-    private String [][] imagesPath;
     private int sizePix, sizeMosaic;
     
     private ArrayList<String> images;
 
     public Mosaic(String nameOfProyect, int sizePix, int sizeMosaic, ArrayList<String> images, String mosaicPath) {
         this.nameMosaic = nameOfProyect;
-//        this.imagesPath = new String[a][a];
         this.sizePix = sizePix;
         this.images = images;
         this.sizeMosaic = sizeMosaic;
@@ -36,13 +34,6 @@ public class Mosaic implements Serializable{
         this.nameMosaic = nameMosaic;
     }
 
-    public String[][] getImagesPath() {
-        return imagesPath;
-    }
-
-    public void setImagesPath(int a, int b, String image) {
-        this.imagesPath [a][b]= image;
-    }
 
     public int getSizePix() {
         return sizePix;
