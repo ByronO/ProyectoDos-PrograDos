@@ -339,7 +339,6 @@ public class Window extends Application {
         });
 
         itemLoadProyect.setOnAction((eventLoad) -> {
-//            try {
 
                 images = new ArrayList<>();
                 FileChooser fileChooser = new FileChooser();
