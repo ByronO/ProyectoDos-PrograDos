@@ -151,10 +151,22 @@ public class Window extends Application {
                             g.getChildren().add(lbl3);
                         } else {
                             FileChooser fileChooser = new FileChooser();
+
+                            FileChooser.ExtensionFilter extFilterJPG
+                                    = new FileChooser.ExtensionFilter("JPG files (*.JPG)", "*.JPG");
+                            FileChooser.ExtensionFilter extFilterjpg
+                                    = new FileChooser.ExtensionFilter("jpg files (*.jpg)", "*.jpg");
+                            FileChooser.ExtensionFilter extFilterPNG
+                                    = new FileChooser.ExtensionFilter("PNG files (*.PNG)", "*.PNG");
+                            FileChooser.ExtensionFilter extFilterpng
+                                    = new FileChooser.ExtensionFilter("png files (*.png)", "*.png");
+                            fileChooser.getExtensionFilters().addAll(extFilterPNG, extFilterpng, extFilterJPG, extFilterjpg);
+
                             File file = fileChooser.showOpenDialog(primaryStage);
 
                             if (file != null) {
-                                if (file.isFile() && file.getName().contains(".jpg") || file.getName().contains(".png")) {
+                                if (file.isFile() && file.getName().contains(".jpg") || file.getName().contains(".png")
+                                        || file.getName().contains(".JPG") || file.getName().contains(".PNG")) {
 
                                     Image image = new Image("file:" + file.getAbsolutePath());
                                     images.add(image);
@@ -218,7 +230,7 @@ public class Window extends Application {
                         sizeMosaic = Integer.parseInt(field2.getText());
 
                         /*Limite al tamaño en pixeles de los cadros ya que si es muy bajo dependiendo 
-                        del tamaño de la imagen dura mucho haciendo el proceso*/ 
+                        del tamaño de la imagen dura mucho haciendo el proceso*/
                         if (sizePix < 30) {
                             lbl3.relocate(210, 53);
                             g.getChildren().add(lbl3);
@@ -227,9 +239,20 @@ public class Window extends Application {
                             g.getChildren().add(lbl3);
                         } else {
                             FileChooser fileChooser = new FileChooser();
-                            File file = fileChooser.showOpenDialog(primaryStage);
 
-                            if (file.isFile() && file.getName().contains(".jpg") || file.getName().contains(".png")) {
+                            FileChooser.ExtensionFilter extFilterJPG
+                                    = new FileChooser.ExtensionFilter("JPG files (*.JPG)", "*.JPG");
+                            FileChooser.ExtensionFilter extFilterjpg
+                                    = new FileChooser.ExtensionFilter("jpg files (*.jpg)", "*.jpg");
+                            FileChooser.ExtensionFilter extFilterPNG
+                                    = new FileChooser.ExtensionFilter("PNG files (*.PNG)", "*.PNG");
+                            FileChooser.ExtensionFilter extFilterpng
+                                    = new FileChooser.ExtensionFilter("png files (*.png)", "*.png");
+                            fileChooser.getExtensionFilters().addAll(extFilterPNG, extFilterpng, extFilterJPG, extFilterjpg);
+
+                            File file = fileChooser.showOpenDialog(primaryStage);
+                            if (file.isFile() && file.getName().contains(".jpg") || file.getName().contains(".png")
+                                    || file.getName().contains(".JPG") || file.getName().contains(".PNG")) {
 
                                 Image image = new Image("file:" + file.getAbsolutePath());
                                 images.add(image);
@@ -293,10 +316,23 @@ public class Window extends Application {
 
         itemLoadImage.setOnAction((eventLoadImage) -> {
             FileChooser fileChooser = new FileChooser();
+
+            FileChooser.ExtensionFilter extFilterJPG
+                    = new FileChooser.ExtensionFilter("JPG files (*.JPG)", "*.JPG");
+            FileChooser.ExtensionFilter extFilterjpg
+                    = new FileChooser.ExtensionFilter("jpg files (*.jpg)", "*.jpg");
+            FileChooser.ExtensionFilter extFilterPNG
+                    = new FileChooser.ExtensionFilter("PNG files (*.PNG)", "*.PNG");
+            FileChooser.ExtensionFilter extFilterpng
+                    = new FileChooser.ExtensionFilter("png files (*.png)", "*.png");
+
+            fileChooser.getExtensionFilters().addAll(extFilterPNG, extFilterpng, extFilterJPG, extFilterjpg);
+
             File file = fileChooser.showOpenDialog(primaryStage);
 
             if (file != null) {
-                if (file.isFile() && file.getName().contains(".jpg") || file.getName().contains(".png")) {
+                if (file.isFile() && file.getName().contains(".jpg") || file.getName().contains(".png")
+                        || file.getName().contains(".JPG") || file.getName().contains(".PNG")) {
 
                     Image image = new Image("file:" + file.getAbsolutePath());
                     images.add(image);
@@ -351,6 +387,11 @@ public class Window extends Application {
 
         itemLoadProyect.setOnAction((eventLoad) -> {
             FileChooser fileChooser = new FileChooser();
+            
+            FileChooser.ExtensionFilter extFilterDAT
+                                    = new FileChooser.ExtensionFilter("Mosaic files (*.dat)", "*.dat");
+            fileChooser.getExtensionFilters().add(extFilterDAT);
+            
             File file = fileChooser.showOpenDialog(primaryStage);
 
             if (file != null) {
