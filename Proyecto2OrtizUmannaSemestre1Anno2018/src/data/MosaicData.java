@@ -41,23 +41,20 @@ public class MosaicData {
     
     public void saveProyect(Mosaic mosaic, String path) throws IOException, ClassNotFoundException{
         File file= new File(path+".dat");
-//        List<Mosaic> objetoList= new ArrayList<Mosaic>();
         
         if(file.exists()){
             ObjectInputStream objectInputStream= new ObjectInputStream(new FileInputStream(file));
             Object aux= objectInputStream.readObject();
-//            objetoList=(List<Mosaic>) aux;
             objectInputStream.close();
         }
         
-//        objetoList.add(mosaic);
         ObjectOutputStream output= new ObjectOutputStream(new FileOutputStream(file));
         output.writeUnshared(mosaic);
         output.close();
     }
     
-     public ArrayList<Mosaic> loadProyect(String path) throws IOException, ClassNotFoundException{
-        File myFile =new File(path);
+     public ArrayList<Mosaic> loadProyect() throws IOException, ClassNotFoundException{
+        File myFile =new File(this.path);
         ArrayList<Mosaic> objetoList= new ArrayList<Mosaic>();
         if(myFile.exists()){
             ObjectInputStream ObjectinputStream=new ObjectInputStream(new FileInputStream(myFile));
