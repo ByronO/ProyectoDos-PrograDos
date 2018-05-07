@@ -53,7 +53,7 @@ public class MosaicInterface {
 
     /*crea un gridpane con los dos botones que controlan el ArrayList de imagenes 
     y en medio de ellos pega el gridpane que retorna el metodo splitImage con la 
-    imagen ya dividida en imageViews con su propo evento del mouse*/
+    imagen ya dividida*/
     public GridPane image(ArrayList<Image> images) {
         //aux es el indice de la ultima image que se cargo
         aux = images.size() - 1;
@@ -93,13 +93,13 @@ public class MosaicInterface {
         blocksX = (int) a.getWidth() / sizePix;
         blocksY = (int) a.getHeight() / sizePix;
 
-        /*presenta el error de que si el tamaño de los cuadros es mayor al tamaño
-        de la imagen no la pinta, estos if fueron intentando solucionar ese problema 
-        pero aun no funcionan, por eso el tamaño de los cuadros tiene un limite*/
+        /*Controla si el tamaño de los cuadros es mayor al tamaño
+        de la imagen*/
         if (sizePix > a.getWidth()) {
             blocksX = 1;
             sizePix = (int) a.getWidth();
-        } else if (sizePix > a.getHeight()) {
+        }
+        if (sizePix > a.getHeight()) {
             blocksY = 1;
             sizePix = (int) a.getHeight();
 
@@ -113,8 +113,8 @@ public class MosaicInterface {
         [blocksX][blocksY] y va agregando en cada posicion el hBox con el trozo de imagen*/
         for (int i = 0; i <= blocksX; i++) {
             for (int j = 0; j <= blocksY; j++) {
-                //controla si ya se llego al ultimo cuadro en el que se puede dividir la imagen
-                if (x + sizePix < a.getWidth() && y + sizePix < a.getHeight()) {
+                //if controla si ya se llego al ultimo cuadro en el que se puede dividir la imagen
+                if (x + sizePix <= a.getWidth() && y + sizePix <= a.getHeight()) {
                     this.pixel = a.getPixelReader(); //recibe los pixeles de la imagen
                     this.writable = new WritableImage(this.pixel, x, y, sizePix, sizePix);//parte la imagen en el x,y del tamaño ingresado 
                     ImageView imageS = new ImageView(writable);
@@ -148,23 +148,23 @@ public class MosaicInterface {
         return g;
     }
 
-    /*Crea i retorna un GridPane con ImagesViews vacios dentro de Hbox*/
-    public GridPane mosaic() {
+    //Crea y retorna un GridPane conn HBox vacios en el que se monta el mosaico
+    public GridPane Mosaic() {
         GridPane g = new GridPane();
         for (int i = 0; i < sizeMosaic; i++) {
             for (int j = 0; j < sizeMosaic; j++) {
                 ImageView imageS = new ImageView();
                 HBox hBox_outter = new HBox();
-
-                /*cada ImageView vacio se agrega a un Hbox con un borde para que se vea cuadriculado*/
+                
                 String style_outter = "-fx-border-color: red;"
                         + "-fx-border-width: 1;"
                         + "-fx-border-style: dotted;";
                 hBox_outter.setStyle(style_outter);
+                
                 hBox_outter.setPrefSize(sizePix, sizePix);
 
 
-                /*Se le da al imageView vacio al que se le de click el atributo 
+                /*Se le da al HBox vacio al que se le de click un ImageView con el atributo 
                 subImage que tiene el trozo de imagen obtenido al darle click a una parte de la imagen*/
                 hBox_outter.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
                     @Override
@@ -173,8 +173,6 @@ public class MosaicInterface {
                             imageS.setRotate(0);
                             imageS.setImage(subImage);
                             imageS.getTransforms().clear();
-
-                            hBox_outter.setStyle(null);
 
                             //limpia el imageView en caso de que tenga algo dentro porque sino tira error
                             hBox_outter.getChildren().clear();
@@ -210,7 +208,6 @@ public class MosaicInterface {
                     }
                 });
 
-
                 g.add(hBox_outter, i, j);
             }
         }
@@ -224,8 +221,9 @@ public class MosaicInterface {
         GridPane g = new GridPane();
         int x = 0;
         int y = 0;
+        
         /*estos for recorren el GridPane como si fuera una matriz corriente del tamaño
-        [blocksX][blocksY] y va agregando en cada posicion el hBox con el trozo de imagen*/
+        [sizeMosaic][sizeMosaic] y va agregando en cada posicion el hBox con el trozo de imagen*/
         for (int i = 0; i <= sizeMosaic; i++) {
             for (int j = 0; j <= sizeMosaic; j++) {
                 //controla si ya se llego al ultimo cuadro en el que se puede dividir la imagen
@@ -235,10 +233,10 @@ public class MosaicInterface {
                     ImageView imageS = new ImageView(writable);
 
                     HBox hBox_outter = new HBox();
-//                    String style_outter = "-fx-border-color: red;"
-//                            + "-fx-border-width: 1;"
-//                            + "-fx-border-style: dotted;";
-//                    hBox_outter.setStyle(style_outter);
+                    String style_outter = "-fx-border-color: red;"
+                            + "-fx-border-width: 1;"
+                            + "-fx-border-style: dotted;";
+                    hBox_outter.setStyle(style_outter);
                     hBox_outter.getChildren().add(imageS);
 
                     hBox_outter.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
@@ -248,8 +246,6 @@ public class MosaicInterface {
                                 imageS.setRotate(0);
                                 imageS.setImage(subImage);
                                 imageS.getTransforms().clear();
-
-                                hBox_outter.setStyle(null);
 
                                 //limpia el imageView en caso de que tenga algo dentro porque sino tira error
                                 hBox_outter.getChildren().clear();
@@ -281,9 +277,6 @@ public class MosaicInterface {
 
                                 context.show(hBox_outter, event.getScreenX(), event.getScreenY());
                             }
-//                     g.getChildren().forEach((Node panel) -> {
-//                        System.out.println("Nodo: " + panel.getClip());
-//                    });
                         }
                     });
 
@@ -303,4 +296,3 @@ public class MosaicInterface {
     }
 
 }
-/**/

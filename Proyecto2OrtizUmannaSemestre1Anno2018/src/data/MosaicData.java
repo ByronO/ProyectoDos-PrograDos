@@ -53,16 +53,16 @@ public class MosaicData {
         output.close();
     }
     
-     public ArrayList<Mosaic> loadProyect() throws IOException, ClassNotFoundException{
-        File myFile =new File(this.path);
-        ArrayList<Mosaic> objetoList= new ArrayList<Mosaic>();
+     public Mosaic loadProyect(String path) throws IOException, ClassNotFoundException{
+        File myFile =new File(path);
+        Mosaic mosaic= new Mosaic();
         if(myFile.exists()){
             ObjectInputStream ObjectinputStream=new ObjectInputStream(new FileInputStream(myFile));
             Object aux= ObjectinputStream.readObject();
-            objetoList=(ArrayList<Mosaic>) aux;
+            mosaic=(Mosaic) aux;
             ObjectinputStream.close();
         }//If       
            
-        return objetoList;
+        return mosaic;
     }//obteneObjeto
 }

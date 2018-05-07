@@ -8,7 +8,7 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="Proyecto2OrtizUmannaSemestre1Anno2018.jar" size="269912" download="eager" />
+    <jar href="Proyecto2OrtizUmannaSemestre1Anno2018.jar" size="269917" download="eager" />
   </resources>
   <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="Proyecto2OrtizUmannaSemestre1Anno2018" >
     <param name="requiredFXVersion" value="8.0+"/>

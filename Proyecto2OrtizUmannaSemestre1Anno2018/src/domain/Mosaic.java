@@ -26,6 +26,10 @@ public class Mosaic implements Serializable{
         this.sizeMosaic = sizeMosaic;
         this.mosaicPath = "file:" + mosaicPath;
     }
+
+    public Mosaic() {
+    }
+    
     public String getNameMosaic() {
         return nameMosaic;
     }
