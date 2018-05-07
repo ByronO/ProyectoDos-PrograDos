@@ -56,8 +56,8 @@ public class MosaicData {
         output.close();
     }
     
-     public ArrayList<Mosaic> loadProyect() throws IOException, ClassNotFoundException{
-        File myFile =new File(this.path);
+     public ArrayList<Mosaic> loadProyect(String path) throws IOException, ClassNotFoundException{
+        File myFile =new File(path);
         ArrayList<Mosaic> objetoList= new ArrayList<Mosaic>();
         if(myFile.exists()){
             ObjectInputStream ObjectinputStream=new ObjectInputStream(new FileInputStream(myFile));
