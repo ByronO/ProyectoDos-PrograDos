@@ -8,8 +8,6 @@ package GUI;
 import java.util.ArrayList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Point3D;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -30,7 +28,7 @@ import javafx.scene.transform.Rotate;
  */
 public class MosaicInterface {
 
-    private GridPane g, g2;
+    private GridPane g;
     private int aux;
     private Button b1, b2;
     private int sizePix, sizeMosaic, blocksX, blocksY;
@@ -133,7 +131,6 @@ public class MosaicInterface {
                     //Obtiene la imagen que tiene el ImageView que esta dentro del Hbox al que se le de click
                     hBox_outter.setOnMouseClicked((event) -> {
                         this.subImage = imageS.getImage();
-                        System.out.println(this.subImage.toString());
                     });
 
                     g.add(hBox_outter, i, j);
@@ -152,7 +149,7 @@ public class MosaicInterface {
     }
 
     /*Crea i retorna un GridPane con ImagesViews vacios dentro de Hbox*/
-    public GridPane Mosaic() {
+    public GridPane mosaic() {
         GridPane g = new GridPane();
         for (int i = 0; i < sizeMosaic; i++) {
             for (int j = 0; j < sizeMosaic; j++) {
